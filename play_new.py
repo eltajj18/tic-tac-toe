@@ -8,8 +8,8 @@ import numpy as np
 
 from keras.models import load_model
 
-from utils import auto_corner_detection
-from utils import detections
+from data.utils import auto_corner_detection
+from data.utils import detections
 
 
 def parse_arguments(argv):
@@ -145,12 +145,8 @@ def main(args):
     global model
     assert os.path.exists(args.model), '{} does not exist'
     model = load_model(args.model)
-
     # Announce winner!
-
     player(args.image_path)
     sys.exit()
-
-
 if __name__ == '__main__':
     main(parse_arguments(sys.argv[1:]))

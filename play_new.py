@@ -13,11 +13,12 @@ import requests
 import json
 
 
-SERVER_URL= "http://5bc9-193-190-253-145.ngrok-free.app" 
+SERVER_URL= "http://f421-193-190-253-145.ngrok-free.app" 
 PATH_URL="/array"
 headers = {
     'Content-Type': 'application/json'
 }
+
 def parse_arguments(argv):
     parser = argparse.ArgumentParser()
 
@@ -137,6 +138,8 @@ def player(image_path):
         board_info.append(shape)
 
     print(board_info)
+    print(type(board_info))
+    return board_info
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
@@ -154,10 +157,10 @@ def monitor_directory(directory):
 def process_and_send_image(image_path):
     try:
         # Perform image processing
-        # processed_output = player(image_path)
-        processed_output =['Blank', 'Blank', 'Blank', 'Blank', 'Blank', 'Blank', 'Blank', 'Blank', 'Blank']
+        new_array = player(image_path)
+        print(type(new_array))
         # Send the processed output to the server
-        response = requests.post(SERVER_URL+PATH_URL, json=processed_output)
+        response = requests.post(url=SERVER_URL+PATH_URL, json=new_array)
 
         # Optionally, handle response from the server
         if response.status_code == 200:
@@ -179,33 +182,31 @@ def process_and_send_image(image_path):
 # if __name__ == '__main__':
 #     main(parse_arguments(sys.argv[1:]))
 
-# def main():
-#     # Directory to monitor for new images
-#     # Load model
-#     global model
-#     model = load_model("data/model.h5")
-#     image_directory = r"C:\Users\eltac\Desktop\VS_CODE\tic-tac-toe\tic-tac-toe\python_images_two"
-#     monitor_directory(image_directory)
+def main():
+    # Directory to monitor for new images
+    # Load model
+    global model
+    model = load_model("data/model.h5")
+    image_directory = r"C:\Users\eltac\Desktop\VS_CODE\tic-tac-toe\tic-tac-toe\python_images_two"
+    monitor_directory(image_directory)
     
 
-def main():
-    try:
-    # Perform image processing
-    # processed_output = player(image_path)
-        new_array =['X', 'Blank', 'Blank', 'O', 'Blank', 'Blank', 'Blank', 'Blank', 'Blank']
-        json_data = json.dumps(new_array)
-        
-    # Send the processed output to the server
-        # response = requests.post(SERVER_URL+PATH_URL, json=new_array)
-        response = requests.post(url = SERVER_URL+PATH_URL,json=json_data)
+# def main():
+#     try:
+#     # Perform image processing
+#     # processed_output = player(image_path)
+#         new_array =['X', 'Blank', 'Blank', 'O', 'Blank', 'Blank', 'Blank', 'Blank', 'Blank']
+#     # Send the processed output to the server
+#         # response = requests.post(SERVER_URL+PATH_URL, json=new_array)
+#         response = requests.post(url = SERVER_URL+PATH_URL,json=new_array)
 
-    # Optionally, handle response from the server
-        if response.status_code == 200:
-            print("Image processed and sent successfully.")
-        else:
-            print("Error:", response.text)
+#     # Optionally, handle response from the server
+#         if response.status_code == 200:
+#             print("Image processed and sent successfully.")
+#         else:
+#             print("Error:", response.text)
 
-    except Exception as e:
-        print("Error processing image:", e)
+#     except Exception as e:
+#         print("Error processing image:", e)
 if __name__ == "__main__":
     main()

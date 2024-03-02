@@ -5,13 +5,19 @@ import sys
 import cv2
 import argparse
 import numpy as np
-
+import time
 from keras.models import load_model
-
 from data.utils import auto_corner_detection
 from data.utils import detections
+import requests
+import json
 
 
+SERVER_URL= "http://5bc9-193-190-253-145.ngrok-free.app" 
+PATH_URL="/array"
+headers = {
+    'Content-Type': 'application/json'
+}
 def parse_arguments(argv):
     parser = argparse.ArgumentParser()
 
@@ -43,7 +49,7 @@ def find_sheet_paper(frame):
 
 def find_shape(cell):
     """Is shape and X or an O?"""
-    mapper = {0: None, 1: 'X', 2: 'O'}
+    mapper = {0: "Blank", 1: 'X', 2: 'O'}
     cell = detections.preprocess_input(cell)
     idx = np.argmax(model.predict(cell))
     return mapper[idx]
@@ -112,10 +118,6 @@ def player(image_path):
     thresh = cv2.GaussianBlur(thresh, (7, 7), 0)
 
     paper = find_sheet_paper(frame)
-
-    # Four red dots must appear on each corner of the sheet of paper,
-    # otherwise try moving it until they're well detected
-
     # Now working with 'paper' to find grid
     paper_gray = cv2.cvtColor(paper, cv2.COLOR_BGR2GRAY)
 
@@ -138,15 +140,72 @@ def player(image_path):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
+# Function to continuously monitor a directory for new images
+def monitor_directory(directory):
+    while True:
+        for filename in os.listdir(directory):
+            if filename.endswith(".jpg"):  # Adjust the file extension as needed
+                image_path = os.path.join(directory, filename)
+                process_and_send_image(image_path)  # Process the image and send to the server
+                os.remove(image_path)  # Optionally, remove the processed image after sending
+        time.sleep(1)  # Adjust the sleep time as needed
 
-def main(args):
-    """Check if everything's okay and start game"""
-    # Load model
-    global model
-    assert os.path.exists(args.model), '{} does not exist'
-    model = load_model(args.model)
-    # Announce winner!
-    player(args.image_path)
-    sys.exit()
-if __name__ == '__main__':
-    main(parse_arguments(sys.argv[1:]))
+
+def process_and_send_image(image_path):
+    try:
+        # Perform image processing
+        # processed_output = player(image_path)
+        processed_output =['Blank', 'Blank', 'Blank', 'Blank', 'Blank', 'Blank', 'Blank', 'Blank', 'Blank']
+        # Send the processed output to the server
+        response = requests.post(SERVER_URL+PATH_URL, json=processed_output)
+
+        # Optionally, handle response from the server
+        if response.status_code == 200:
+            print("Image processed and sent successfully.")
+        else:
+            print("Error:", response.text)
+
+    except Exception as e:
+        print("Error processing image:", e)
+
+# def main(args):
+#     """Check if everything's okay and start game"""
+#     # Load model
+#     global model
+#     assert os.path.exists(args.model), '{} does not exist'
+#     model = load_model(args.model)
+#     player(args.image_path)
+#     sys.exit()
+# if __name__ == '__main__':
+#     main(parse_arguments(sys.argv[1:]))
+
+# def main():
+#     # Directory to monitor for new images
+#     # Load model
+#     global model
+#     model = load_model("data/model.h5")
+#     image_directory = r"C:\Users\eltac\Desktop\VS_CODE\tic-tac-toe\tic-tac-toe\python_images_two"
+#     monitor_directory(image_directory)
+    
+
+def main():
+    try:
+    # Perform image processing
+    # processed_output = player(image_path)
+        new_array =['X', 'Blank', 'Blank', 'O', 'Blank', 'Blank', 'Blank', 'Blank', 'Blank']
+        json_data = json.dumps(new_array)
+        
+    # Send the processed output to the server
+        # response = requests.post(SERVER_URL+PATH_URL, json=new_array)
+        response = requests.post(url = SERVER_URL+PATH_URL,json=json_data)
+
+    # Optionally, handle response from the server
+        if response.status_code == 200:
+            print("Image processed and sent successfully.")
+        else:
+            print("Error:", response.text)
+
+    except Exception as e:
+        print("Error processing image:", e)
+if __name__ == "__main__":
+    main()

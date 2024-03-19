@@ -13,8 +13,9 @@ import requests
 import json
 
 
-SERVER_URL= "http://f421-193-190-253-145.ngrok-free.app" 
-PATH_URL="/array"
+SERVER_URL_ARRAY_POST= "http://martin-upward-lately.ngrok-free.app/array" 
+SERVER_URL_ARRAY_READY_FLAG = "http://martin-upward-lately.ngrok-free.app/array/state"
+
 headers = {
     'Content-Type': 'application/json'
 }
@@ -50,7 +51,7 @@ def find_sheet_paper(frame):
 
 def find_shape(cell):
     """Is shape and X or an O?"""
-    mapper = {0: "Blank", 1: 'X', 2: 'O'}
+    mapper = {0: " ", 1: 'X', 2: 'O'}
     cell = detections.preprocess_input(cell)
     idx = np.argmax(model.predict(cell))
     return mapper[idx]
@@ -152,24 +153,72 @@ def monitor_directory(directory):
                 process_and_send_image(image_path)  # Process the image and send to the server
                 os.remove(image_path)  # Optionally, remove the processed image after sending
         time.sleep(1)  # Adjust the sleep time as needed
+import time
+
+def send_with_retry(url, payload, headers, max_retries=3, retry_delay=3):
+    """
+    Attempt to send a POST request up to max_retries times.
+
+    :param url: The URL to send the POST request to.
+    :param payload: The JSON payload to be sent.
+    :param headers: Headers for the request.
+    :param max_retries: Maximum number of retry attempts.
+    :param retry_delay: Delay between retries in seconds.
+    :return: The response object if successful, None if not.
+    """
+    for attempt in range(max_retries):
+        response = requests.post(url, json=payload, headers=headers)
+        if response.status_code == 200:
+            print("Request successful.")
+            return response
+        else:
+            print(f"Attempt {attempt + 1} failed with status code {response.status_code}. Retrying...")
+            time.sleep(retry_delay)
+    print("Max retries reached. Request failed.")
+    return None  # Indicates failure after all attempts
 
 
 def process_and_send_image(image_path):
     try:
-        # Perform image processing
+        # Perform image processing to get the new game state
         new_array = player(image_path)
-        print(type(new_array))
-        # Send the processed output to the server
-        response = requests.post(url=SERVER_URL+PATH_URL, json=new_array)
+        
+        # Prepare the payload
+        payload1 =  new_array
+        payload2 = {"is_ready":True}
 
-        # Optionally, handle response from the server
-        if response.status_code == 200:
-            print("Image processed and sent successfully.")
+        # Use the send_with_retry function to attempt sending the data
+        response1 = send_with_retry(SERVER_URL_ARRAY_READY_FLAG, payload2, headers)
+        response2 = send_with_retry(SERVER_URL_ARRAY_POST, payload1, headers)
+        # Optionally, check the response here if additional handling is needed
+        if response1 and response2:
+           print("Data sent successfully.")
         else:
-            print("Error:", response.text)
-
+            print("Error sending data to server.")
     except Exception as e:
-        print("Error processing image:", e)
+        print(f"Error processing image: {e}")
+# def process_and_send_image(image_path):
+#     try:
+#         # Perform image processing
+#         new_array = player(image_path)
+#         print(type(new_array))
+#         # Send the processed output to the server
+#         response = requests.post(url=SERVER_URL_ARRAY_POST, json = new_array)
+
+#         # Optionally, handle response from the server
+#         if response.status_code == 200:
+#             print("Image processed and sent successfully.")
+#         else:
+#             print("Error:", response.text)
+#     # Second POST request: Send the is_ready flag indicating new data
+#         flag_payload = {"is_ready": True}
+#         response2 = requests.post(url=SERVER_URL_ARRAY_READY_FLAG, json=flag_payload)
+#         if response2.status_code == 200:
+#             print("Readiness flag sent successfully.")
+#         else:
+#             print(f"Error sending readiness flag: {response2.text}")
+#     except Exception as e:
+#         print("Error processing image:", e)
 
 # def main(args):
 #     """Check if everything's okay and start game"""

@@ -186,25 +186,25 @@ def process_and_send_image(image_path):
         print(f"Error processing image: {e}")
 
 
-def main(args):
-    """Check if everything's okay and start game"""
-    # Load model
-    global model
-    assert os.path.exists(args.model), '{} does not exist'
-    model = load_model(args.model)
-    populate(args.image_path)
-    sys.exit()
-if __name__ == '__main__':
-    main(parse_arguments(sys.argv[1:]))
-
-
-# def main():
-#     # Directory to monitor for new images
+# def main(args):
+#     """Check if everything's okay and start game"""
 #     # Load model
 #     global model
-#     model = load_model("data/model.h5")
-#     image_directory = r"C:\Users\eltac\Desktop\VS_CODE\tic-tac-toe\tic-tac-toe\active_images_repo"
-#     monitor_directory(image_directory)
+#     assert os.path.exists(args.model), '{} does not exist'
+#     model = load_model(args.model)
+#     populate(args.image_path)
+#     sys.exit()
+# if __name__ == '__main__':
+#     main(parse_arguments(sys.argv[1:]))
+
+
+def main():
+    # Directory to monitor for new images
+    # Load model
+    global model
+    model = load_model("data/model.h5")
+    image_directory = r"C:\Users\eltac\Desktop\VS_CODE\tic-tac-toe\tic-tac-toe\active_images_repo"
+    monitor_directory(image_directory)
     
 if __name__ == "__main__":
     main()

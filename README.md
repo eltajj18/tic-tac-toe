@@ -1,31 +1,24 @@
 # Tic-tac-toe board state detection with OpenCV and Keras
 
-# A fully functional project of processing the input image of tic-tac-toe game and outputting the array representing the locations of "X" "O" and "Blank" and sending the output through HTTP_POST to the server. 
-
-
+### A fully functional project of processing the input image of tic-tac-toe game and outputting the array representing the locations of "X" "O" and "Blank" and sending the output through HTTP_POST to the server. 
 ## Flow Chart
 ![Flow_Chart](https://github.com/eltajj18/tic-tac-toe/assets/100543589/fb7e8018-7b36-4df3-9d66-00b81a4f8474)
 
 ## Capabilities
 0. Once you input the image file:
-<img src ="C:\Users\eltac\Desktop\VS_CODE\tic-tac-toe\tic-tac-toe\received_images_TimerCam/received_image2_20240410_205202.jpg"/>
-
+![received_image2_20240410_205202](https://github.com/eltajj18/tic-tac-toe/assets/100543589/56155f52-b70b-4071-b431-1c895b832901)
 1. The program first creates grayscale version of that:
-<img src ="C:\Users\eltac\Desktop\VS_CODE\tic-tac-toe\tic-tac-toe\opencv_images\paper_gray.jpg"/>
-
+![paper_gray](https://github.com/eltajj18/tic-tac-toe/assets/100543589/0f07ee32-4672-4b8f-b808-330403a5db9f)
 2. From that it applies blur and edge detection: 
-<img src ="C:\Users\eltac\Desktop\VS_CODE\tic-tac-toe\tic-tac-toe\opencv_images\paper_edged.jpg"/>
-
+![paper_edged](https://github.com/eltajj18/tic-tac-toe/assets/100543589/d881f4ea-8dfc-446e-80e9-b1d67264de79)
 3. Then by using edge detected image, outline of the paper is achieved:
-<img src ="C:\Users\eltac\Desktop\VS_CODE\tic-tac-toe\tic-tac-toe\opencv_images\paper_outline.jpg"/>
-
+![paper_outline](https://github.com/eltajj18/tic-tac-toe/assets/100543589/a5d505ee-db8e-4b66-b5d8-d7d9c1098232)
 4. Then by applying four point transform, we obtain a top-down bird's-eye view of the paper: 
-<img src ="C:\Users\eltac\Desktop\VS_CODE\tic-tac-toe\tic-tac-toe\opencv_images\paper_final.jpg"/>
-
+![paper_final](https://github.com/eltajj18/tic-tac-toe/assets/100543589/c85e0542-4517-4f49-b420-4103ed58837b)
 5. After getting top-down bird's-eye view of the paper, we again grayscale it and find the threshold of the paper: 
-<img src ="C:\Users\eltac\Desktop\VS_CODE\tic-tac-toe\tic-tac-toe\opencv_images\thresh_paper.jpg"/>
+![thresh_paper](https://github.com/eltajj18/tic-tac-toe/assets/100543589/30e93210-0bde-426b-816a-09314071e675)
 6. Then finally the program puts a grid over the "top-down bird's-eye view of the paper":
-<img src ="C:\Users\eltac\Desktop\VS_CODE\tic-tac-toe\tic-tac-toe\opencv_images\griddy_paper.jpg"/>
+![griddy_paper](https://github.com/eltajj18/tic-tac-toe/assets/100543589/0915b7b9-c1ad-4a02-946a-af35619f9965)
 
 ## Limitations
 

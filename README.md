@@ -2,7 +2,7 @@
 
 ### A fully functional project of processing the input image of tic-tac-toe game and outputting the array representing the locations of "X" "O" and "Blank" and sending the output through HTTP_POST to the server. 
 ## Flow Chart
-![Flow_Chart](https://github.com/eltajj18/tic-tac-toe/assets/100543589/fb7e8018-7b36-4df3-9d66-00b81a4f8474)
+![EE3-Python-ML - Page 1](https://github.com/eltajj18/tic-tac-toe/assets/100543589/fc50b13c-f258-4ef8-ac62-4eef646499bd)
 
 ## Capabilities
 ### 0.Once you input the image file:

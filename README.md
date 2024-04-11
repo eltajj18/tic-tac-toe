@@ -4,7 +4,7 @@
 
 
 ## Flow Chart
-<img src ="C:\Users\eltac\Desktop\VS_CODE\tic-tac-toe\tic-tac-toe\opencv_images\Flow_Chart.jpeg"/>
+![Flow_Chart](https://github.com/eltajj18/tic-tac-toe/assets/100543589/fb7e8018-7b36-4df3-9d66-00b81a4f8474)
 
 ## Capabilities
 0. Once you input the image file:

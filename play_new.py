@@ -34,17 +34,6 @@ def parse_arguments(argv):
 # def find_sheet_paper(frame, thresh, add_margin=True):
 def find_sheet_paper(frame):
     """Detect the coords of the sheet of paper the game will be played on"""
-    # stats = detections.find_corners(thresh)
-    # # First point is center of coordinate system, so ignore it
-    # # We only want sheet of paper's corners
-    # corners = stats[1:, :2]
-    # corners = imutilis.order_points(corners)
-    # # Get bird view of sheet of paper
-    # paper = imutilis.four_point_transform(frame, corners)
-    # if add_margin:
-    #     paper = paper[10:-10, 10:-10]
-    # return paper, corners
-    #
     paper = auto_corner_detection.auto_corner(frame)
     return paper
 
@@ -103,10 +92,8 @@ def draw_shape(template, shape, coords):
     return template
 
 
-def player(image_path):
-    """Play tic tac toe game with computer that uses the alphabeta algorithm"""
-    # Initialize opponent (computer)
-    history = {}
+def populate(image_path):
+    """Populate the board with the shapes found in the cells of the grid"""
     board_info = []
     # Read the image
 
@@ -125,12 +112,12 @@ def player(image_path):
 
     _, paper_thresh = cv2.threshold(
         paper_gray, 170, 255, cv2.THRESH_BINARY_INV)
-    cv2.imwrite("python_images/thresh_paper.jpg",  paper_thresh)
+    cv2.imwrite("opencv_images/thresh_paper.jpg",  paper_thresh)
     grid = get_board_template(paper_thresh)
 
     for i, (x, y, w, h) in enumerate(grid):
         griddy_paper = cv2.rectangle(paper, (x, y), (x + w, y + h), (0, 0, 0), 2)
-        cv2.imwrite("python_images/griddy_paper.jpg",griddy_paper)
+        cv2.imwrite("opencv_images/griddy_paper.jpg",griddy_paper)
 
     for i, (x, y, w, h) in enumerate(grid):
         # Find what is inside each free cell
@@ -181,7 +168,7 @@ def send_with_retry(url, payload, headers, max_retries=3, retry_delay=3):
 def process_and_send_image(image_path):
     try:
         # Perform image processing to get the new game state
-        new_array = player(image_path)
+        new_array = populate(image_path)
         
         # Prepare the payload
         payload1 =  new_array
@@ -197,65 +184,27 @@ def process_and_send_image(image_path):
             print("Error sending data to server.")
     except Exception as e:
         print(f"Error processing image: {e}")
-# def process_and_send_image(image_path):
-#     try:
-#         # Perform image processing
-#         new_array = player(image_path)
-#         print(type(new_array))
-#         # Send the processed output to the server
-#         response = requests.post(url=SERVER_URL_ARRAY_POST, json = new_array)
 
-#         # Optionally, handle response from the server
-#         if response.status_code == 200:
-#             print("Image processed and sent successfully.")
-#         else:
-#             print("Error:", response.text)
-#     # Second POST request: Send the is_ready flag indicating new data
-#         flag_payload = {"is_ready": True}
-#         response2 = requests.post(url=SERVER_URL_ARRAY_READY_FLAG, json=flag_payload)
-#         if response2.status_code == 200:
-#             print("Readiness flag sent successfully.")
-#         else:
-#             print(f"Error sending readiness flag: {response2.text}")
-#     except Exception as e:
-#         print("Error processing image:", e)
 
-# def main(args):
-#     """Check if everything's okay and start game"""
-#     # Load model
-#     global model
-#     assert os.path.exists(args.model), '{} does not exist'
-#     model = load_model(args.model)
-#     player(args.image_path)
-#     sys.exit()
-# if __name__ == '__main__':
-#     main(parse_arguments(sys.argv[1:]))
-
-def main():
-    # Directory to monitor for new images
+def main(args):
+    """Check if everything's okay and start game"""
     # Load model
     global model
-    model = load_model("data/model.h5")
-    image_directory = r"C:\Users\eltac\Desktop\VS_CODE\tic-tac-toe\tic-tac-toe\python_images_two"
-    monitor_directory(image_directory)
-    
+    assert os.path.exists(args.model), '{} does not exist'
+    model = load_model(args.model)
+    populate(args.image_path)
+    sys.exit()
+if __name__ == '__main__':
+    main(parse_arguments(sys.argv[1:]))
+
 
 # def main():
-#     try:
-#     # Perform image processing
-#     # processed_output = player(image_path)
-#         new_array =['X', 'Blank', 'Blank', 'O', 'Blank', 'Blank', 'Blank', 'Blank', 'Blank']
-#     # Send the processed output to the server
-#         # response = requests.post(SERVER_URL+PATH_URL, json=new_array)
-#         response = requests.post(url = SERVER_URL+PATH_URL,json=new_array)
-
-#     # Optionally, handle response from the server
-#         if response.status_code == 200:
-#             print("Image processed and sent successfully.")
-#         else:
-#             print("Error:", response.text)
-
-#     except Exception as e:
-#         print("Error processing image:", e)
+#     # Directory to monitor for new images
+#     # Load model
+#     global model
+#     model = load_model("data/model.h5")
+#     image_directory = r"C:\Users\eltac\Desktop\VS_CODE\tic-tac-toe\tic-tac-toe\active_images_repo"
+#     monitor_directory(image_directory)
+    
 if __name__ == "__main__":
     main()

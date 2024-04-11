@@ -1,6 +1,6 @@
+'''This is webcam version of image capture. It captures a single frame from the webcam and saves it to an image file.'''
+'''Not currently in use'''
 import cv2
-
-
 # Open the webcam
 def image_capture():
     cap = cv2.VideoCapture(0)  # 0 indicates the default camera, you can change it if you have multiple cameras
